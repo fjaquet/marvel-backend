@@ -1,14 +1,20 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const mongoose = require("mongoose");
+
+mongoose.connect(process.env.MONGODB_URI);
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 const errorHandler = require("./middlewares/errorHandler");
 const marvelRoutes = require("./routes/marvelRoutes");
+const userRoutes = require("./routes/user");
 
 app.use(marvelRoutes);
+app.use(userRoutes);
 
 app.get("/", (req, res, next) => {
   try {
@@ -24,6 +30,6 @@ app.all(/.*/, (req, res) => {
 
 app.use(errorHandler);
 
-app.listen(process.env.PORT || 3000, () => {
+app.listen(process.env.HTTP_PORT || 3000, () => {
   console.log("server started");
 });
