@@ -40,14 +40,11 @@ const getFavoriteCharacters = async (req, res, next) => {
 const addFavoriteCharacter = async (req, res, next) => {
   try {
     if (!req.user.favorite_characters.includes(req.params.id)) {
-      const favoriteCharacters = await pushFavoriteCharacter(
-        req.user,
-        req.params.id,
-      );
-      return res.json(favoriteCharacters);
+      await pushFavoriteCharacter(req.user, req.params.id);
+      return res.json({ message: "Character added to favorites" });
     } else {
       return res
-        .status(400)
+        .status(409)
         .json({ message: "Character already in favorites" });
     }
   } catch (error) {
@@ -83,10 +80,10 @@ const getFavoriteComics = async (req, res, next) => {
 const addFavoriteComic = async (req, res, next) => {
   try {
     if (!req.user.favorite_comics.includes(req.params.id)) {
-      const favoriteComics = await pushFavoriteComic(req.user, req.params.id);
-      return res.json(favoriteComics);
+      await pushFavoriteComic(req.user, req.params.id);
+      return res.json({ message: "Comic added to favorites" });
     } else {
-      return res.status(400).json({ message: "Comic already in favorites" });
+      return res.status(409).json({ message: "Comic already in favorites" });
     }
   } catch (error) {
     next(error);
