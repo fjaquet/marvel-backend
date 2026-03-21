@@ -13,10 +13,12 @@ const {
 } = require("../controllers/userController");
 
 const isAuthenticated = require("../middlewares/isAuthenticated");
+const payloadValidator = require("../middlewares/payloadValidator");
+const { signupSchema, loginSchema } = require("../validations/userValidation");
 
-router.post("/user/signup", signup);
+router.post("/user/signup", payloadValidator(signupSchema, "body"), signup);
 
-router.post("/user/login", login);
+router.post("/user/login", payloadValidator(loginSchema, "body"), login);
 
 router.get("/user/favorite_characters", isAuthenticated, getFavoriteCharacters);
 router.put(
