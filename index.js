@@ -18,7 +18,7 @@ app.use(userRoutes);
 
 app.get("/", (req, res, next) => {
   try {
-    return res.json("Marvel backend");
+    return res.json("hello");
   } catch (error) {
     next(error);
   }
