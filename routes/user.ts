@@ -1,7 +1,7 @@
-const express = require("express");
+import express from "express";
 
 const router = express.Router();
-const {
+import {
   signup,
   login,
   getFavoriteCharacters,
@@ -10,11 +10,11 @@ const {
   getFavoriteComics,
   addFavoriteComic,
   deleteFavoriteComic,
-} = require("../controllers/userController");
+} from "../controllers/userController";
 
-const isAuthenticated = require("../middlewares/isAuthenticated");
-const payloadValidator = require("../middlewares/payloadValidator");
-const { signupSchema, loginSchema } = require("../validations/userValidation");
+import isAuthenticated from "../middlewares/isAuthenticated";
+import payloadValidator from "../middlewares/payloadValidator";
+import { signupSchema, loginSchema } from "../validations/userValidation";
 
 router.post("/user/signup", payloadValidator(signupSchema, "body"), signup);
 
@@ -40,4 +40,4 @@ router.delete(
   deleteFavoriteComic,
 );
 
-module.exports = router;
+export default router;

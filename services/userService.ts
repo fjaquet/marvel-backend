@@ -1,14 +1,25 @@
-const SHA256 = require("crypto-js/sha256");
-const encBase64 = require("crypto-js/enc-base64");
-const uid2 = require("uid2");
+import SHA256 from "crypto-js/sha256";
+import encBase64 from "crypto-js/enc-base64";
+import { randomBytes } from "node:crypto";
 
-const User = require("../models/User");
+import User, { UserDocument } from "../models/User";
 
-const createUser = async (data) => {
+type CreateUser = {
+  username: string;
+  email: string;
+  password: string;
+};
+
+type LogUser = {
+  email: string;
+  password: string;
+};
+
+const createUser = async (data: CreateUser) => {
   const password = data.password;
-  const salt = uid2(16);
+  const salt = randomBytes(8).toString("hex");
   const hash = SHA256(password + salt).toString(encBase64);
-  const token = uid2(64);
+  const token = randomBytes(32).toString("hex");
 
   const user = await User.create({
     email: data.email,
@@ -25,20 +36,20 @@ const createUser = async (data) => {
   };
 };
 
-const logUser = async (data) => {
+const logUser = async (data: LogUser) => {
   const email = data.email;
   const password = data.password;
 
   const user = await User.findOne({ email: email });
 
   if (!user) {
-    throw { message: "Unauthorized" };
+    throw new Error("Unauthorized");
   }
 
   const hash = SHA256(password + user.salt).toString(encBase64);
 
   if (hash !== user.hash) {
-    throw { message: "Unauthorized" };
+    throw new Error("Unauthorized");
   } else {
     return {
       message: {
@@ -48,13 +59,16 @@ const logUser = async (data) => {
   }
 };
 
-const fetchFavoriteCharacters = async (user) => {
+const fetchFavoriteCharacters = async (user: UserDocument) => {
   return {
     favorite_characters: user.favorite_characters,
   };
 };
 
-const pushFavoriteCharacter = async (user, characterId) => {
+const pushFavoriteCharacter = async (
+  user: UserDocument,
+  characterId: string,
+) => {
   const favoriteCharacters = user.favorite_characters;
   favoriteCharacters.push(characterId);
   const response = await User.findByIdAndUpdate(
@@ -70,7 +84,10 @@ const pushFavoriteCharacter = async (user, characterId) => {
   return { response };
 };
 
-const removeFavoriteCharacter = async (user, characterId) => {
+const removeFavoriteCharacter = async (
+  user: UserDocument,
+  characterId: string,
+) => {
   const favoriteCharacters = user.favorite_characters;
   const index = favoriteCharacters.indexOf(characterId);
   favoriteCharacters.splice(index, 1);
@@ -88,13 +105,13 @@ const removeFavoriteCharacter = async (user, characterId) => {
   return { response };
 };
 
-const fetchFavoriteComics = async (user) => {
+const fetchFavoriteComics = async (user: UserDocument) => {
   return {
     favorite_comics: user.favorite_comics,
   };
 };
 
-const pushFavoriteComic = async (user, comicId) => {
+const pushFavoriteComic = async (user: UserDocument, comicId: string) => {
   const favoriteComics = user.favorite_comics;
   favoriteComics.push(comicId);
   const response = await User.findByIdAndUpdate(
@@ -110,7 +127,7 @@ const pushFavoriteComic = async (user, comicId) => {
   return { response };
 };
 
-const removeFavoriteComic = async (user, comicId) => {
+const removeFavoriteComic = async (user: UserDocument, comicId: string) => {
   const favoriteComics = user.favorite_comics;
   const index = favoriteComics.indexOf(comicId);
   favoriteComics.splice(index, 1);
@@ -130,7 +147,7 @@ const removeFavoriteComic = async (user, comicId) => {
 
 removeFavoriteComic;
 
-module.exports = {
+export {
   createUser,
   logUser,
   fetchFavoriteCharacters,

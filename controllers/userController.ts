@@ -1,4 +1,6 @@
-const {
+import type { Request, Response, NextFunction } from "express";
+
+import {
   createUser,
   logUser,
   fetchFavoriteCharacters,
@@ -7,39 +9,33 @@ const {
   fetchFavoriteComics,
   pushFavoriteComic,
   removeFavoriteComic,
-} = require("../services/userService");
+} from "../services/userService";
 
-const signup = async (req, res, next) => {
+const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const newUser = await createUser(req.body);
 
     return res.status(201).json(newUser);
   } catch (error) {
-    if (error.message.includes("email_1 dup key")) {
-      return res.status(400).json({
-        message: "There is already an account associated to this email",
-      });
-    } else {
-      next(error);
-    }
+    next(error);
   }
 };
 
-const login = async (req, res, next) => {
+const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await logUser(req.body);
 
     return res.json(result.message);
   } catch (error) {
-    if (error.message.includes("Unauthorized")) {
-      return res.status(401).json(error.message);
-    } else {
-      next(error);
-    }
+    next(error);
   }
 };
 
-const getFavoriteCharacters = async (req, res, next) => {
+const getFavoriteCharacters = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const favoriteCharacters = await fetchFavoriteCharacters(req.user);
     return res.json(favoriteCharacters);
@@ -48,7 +44,11 @@ const getFavoriteCharacters = async (req, res, next) => {
   }
 };
 
-const addFavoriteCharacter = async (req, res, next) => {
+const addFavoriteCharacter = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     if (!req.user.favorite_characters.includes(req.params.id)) {
       await pushFavoriteCharacter(req.user, req.params.id);
@@ -63,7 +63,11 @@ const addFavoriteCharacter = async (req, res, next) => {
   }
 };
 
-const deleteFavoriteCharacter = async (req, res, next) => {
+const deleteFavoriteCharacter = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     if (req.user.favorite_characters.includes(req.params.id)) {
       const favoriteCharacters = await removeFavoriteCharacter(
@@ -79,7 +83,11 @@ const deleteFavoriteCharacter = async (req, res, next) => {
   }
 };
 
-const getFavoriteComics = async (req, res, next) => {
+const getFavoriteComics = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const favoriteComics = await fetchFavoriteComics(req.user);
     return res.json(favoriteComics);
@@ -88,7 +96,11 @@ const getFavoriteComics = async (req, res, next) => {
   }
 };
 
-const addFavoriteComic = async (req, res, next) => {
+const addFavoriteComic = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     if (!req.user.favorite_comics.includes(req.params.id)) {
       await pushFavoriteComic(req.user, req.params.id);
@@ -101,7 +113,11 @@ const addFavoriteComic = async (req, res, next) => {
   }
 };
 
-const deleteFavoriteComic = async (req, res, next) => {
+const deleteFavoriteComic = async (
+  req: Request<{ id: string }>,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     if (req.user.favorite_comics.includes(req.params.id)) {
       const favoriteComics = await removeFavoriteComic(req.user, req.params.id);
@@ -114,7 +130,7 @@ const deleteFavoriteComic = async (req, res, next) => {
   }
 };
 
-module.exports = {
+export {
   signup,
   login,
   getFavoriteCharacters,

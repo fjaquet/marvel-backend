@@ -1,5 +1,5 @@
-const z = require("zod");
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import { z } from "zod";
 
 const getCharactersSchema = z.object({
   limit: z.coerce.number().gte(0).optional(),
@@ -14,17 +14,20 @@ const getComicsSchema = z.object({
 });
 
 const characterIdSchema = z.object({
-  characterId: z.custom(
+  characterId: z.custom<string>(
     (id) => mongoose.isValidObjectId(id),
     "Invalid Id format",
   ),
 });
 
 const comicIdSchema = z.object({
-  comicId: z.custom((id) => mongoose.isValidObjectId(id), "Invalid Id format"),
+  comicId: z.custom<string>(
+    (id) => mongoose.isValidObjectId(id),
+    "Invalid Id format",
+  ),
 });
 
-module.exports = {
+export {
   getCharactersSchema,
   getComicsSchema,
   characterIdSchema,

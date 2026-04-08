@@ -1,15 +1,16 @@
-const express = require("express");
+import express from "express";
 
 const router = express.Router();
 
-const payloadValidator = require("../middlewares/payloadValidator");
-const { getAll, getById } = require("../controllers/marvelController");
-const {
+import payloadValidator from "../middlewares/payloadValidator";
+
+import { getAll, getById } from "../controllers/marvelController";
+import {
   getCharactersSchema,
   getComicsSchema,
   characterIdSchema,
   comicIdSchema,
-} = require("../validations/marvelValidation");
+} from "../validations/marvelValidation";
 
 const routesById = [
   {
@@ -45,4 +46,4 @@ routesById.forEach((routeById) => {
   );
 });
 
-module.exports = router;
+export default router;
